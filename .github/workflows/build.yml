@@ -1,0 +1,38 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Android SDK/NDK
+      run: |
+        sudo apt update
+        sudo apt install -y python3-pip python3-dev git zip unzip openjdk-17-jdk autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake
+        pip3 install --user buildozer
+
+    - name: Create Spec File
+      run: |
+        ~/.local/bin/buildozer init
+        sed -i 's/title = My Application/title = Leads Extractor/g' buildozer.spec
+        sed -i 's/package.name = myapp/package.name = gmiextractor/g' buildozer.spec
+        sed -i 's/requirements = python3,kivy/requirements = python3,kivy,requests,kivymd,jnius/g' buildozer.spec
+        sed -i 's/#android.archs = arm64-v8a, armeabi-v7a/android.archs = arm64-v8a/g' buildozer.spec
+
+    - name: Build with Buildozer
+      run: |
+        ~/.local/bin/buildozer -v android debug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: package-debug-apk
+        path: bin/*.apk
