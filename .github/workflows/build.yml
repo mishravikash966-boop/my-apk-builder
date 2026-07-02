@@ -19,12 +19,17 @@ jobs:
         sudo apt install -y python3-pip python3-dev git zip unzip openjdk-17-jdk autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake
         pip3 install --user buildozer
 
+    - name: Accept Android Licenses
+      run: |
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n244d2d9e8db31f472044653a305629ac73b84376\n504667f4c0de7af1a06de9f4b1727b84351f2910\n2c3322bcf225f5033fd3d5de56ec9a50e5b36447\n16ad21795455392fe1221cab05bfeb3f30302582\n893a02957ad7567582193d56d94331847d4d4716\n601085b94cd77f0b54c02473446cda5013b80ea7\n8522d4756c400e4fe51f1559accb4c4002ea87b0" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n845d67b1226a3665080bde1d58833019f72db903" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+
     - name: Create Spec File
       run: |
         ~/.local/bin/buildozer init
         sed -i 's/title = My Application/title = Leads Extractor/g' buildozer.spec
         sed -i 's/package.name = myapp/package.name = gmiextractor/g' buildozer.spec
-        # Adding internet permissions and correct requirements
         sed -i 's/requirements = python3,kivy/requirements = python3,kivy,requests,kivymd,jnius,urllib3,certifi/g' buildozer.spec
         sed -i 's/#android.permissions = INTERNET/android.permissions = INTERNET/g' buildozer.spec
         sed -i 's/#android.archs = arm64-v8a, armeabi-v7a/android.archs = arm64-v8a/g' buildozer.spec
