@@ -24,7 +24,9 @@ jobs:
         ~/.local/bin/buildozer init
         sed -i 's/title = My Application/title = Leads Extractor/g' buildozer.spec
         sed -i 's/package.name = myapp/package.name = gmiextractor/g' buildozer.spec
-        sed -i 's/requirements = python3,kivy/requirements = python3,kivy,requests,kivymd,jnius/g' buildozer.spec
+        # Adding internet permissions and correct requirements
+        sed -i 's/requirements = python3,kivy/requirements = python3,kivy,requests,kivymd,jnius,urllib3,certifi/g' buildozer.spec
+        sed -i 's/#android.permissions = INTERNET/android.permissions = INTERNET/g' buildozer.spec
         sed -i 's/#android.archs = arm64-v8a, armeabi-v7a/android.archs = arm64-v8a/g' buildozer.spec
 
     - name: Build with Buildozer
